@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+:root {
+    --game-scale: 3;
+}
+
 body {
     background: #0a0a1a;
     min-height: 100vh;
@@ -45,8 +49,8 @@ body::before {
 
 #gameCanvas {
     display: block;
-    width: min(768px, calc(100vw - 32px), calc((100svh - 150px) * 1.0667)) !important;
-    height: auto !important;
+    width: calc(256px * var(--game-scale));
+    height: calc(240px * var(--game-scale));
     max-width: 100%;
     aspect-ratio: 256 / 240;
     border: 4px solid #2a2a4a;
@@ -75,7 +79,7 @@ body::before {
     font-size: 9px;
     text-align: center;
     line-height: 1.8;
-    letter-spacing: 0.5px;
+    letter-spacing: 0;
     padding: 12px 20px;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 8px;
@@ -149,6 +153,10 @@ body::before {
 }
 
 @media (max-width: 800px) {
+    :root {
+        --game-scale: 2;
+    }
+
     body {
         padding: 10px;
     }
@@ -171,5 +179,17 @@ body::before {
         justify-content: center;
         flex-wrap: wrap;
         white-space: normal;
+    }
+}
+
+@media (max-height: 860px) {
+    :root {
+        --game-scale: 2;
+    }
+}
+
+@media (max-width: 540px) {
+    :root {
+        --game-scale: 1;
     }
 }

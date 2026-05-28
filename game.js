@@ -3,7 +3,6 @@
 // ============================================
 
 const T = 16; // tile size
-const SCALE = 3;
 const W = 256; // NES width
 const H = 240; // NES height
 const GRAVITY = 0.4;
@@ -49,8 +48,6 @@ class Game {
         this.canvas = document.getElementById('gameCanvas');
         this.canvas.width = W;
         this.canvas.height = H;
-        this.canvas.style.width = W * SCALE + 'px';
-        this.canvas.style.height = H * SCALE + 'px';
         this.ctx = this.canvas.getContext('2d');
         this.ctx.imageSmoothingEnabled = false;
         this.sound = new SoundManager();
