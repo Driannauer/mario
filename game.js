@@ -42,6 +42,128 @@ function keyJump() { return keys['Space'] || keys['ArrowUp'] || keys['KeyW']; }
 function keyDown() { return keys['ArrowDown'] || keys['KeyS']; }
 function keyFire() { return keyPressed['KeyX'] || keyPressed['KeyJ']; }
 
+// Canvas text is anti-aliased by browsers, which makes tiny pixel fonts look soft.
+// For game UI text, draw a small bitmap alphabet with rectangles instead.
+const PIXEL_GLYPHS = {
+    ' ': ['000', '000', '000', '000', '000', '000', '000'],
+    'A': ['01110', '10001', '10001', '11111', '10001', '10001', '10001'],
+    'B': ['11110', '10001', '10001', '11110', '10001', '10001', '11110'],
+    'C': ['01111', '10000', '10000', '10000', '10000', '10000', '01111'],
+    'D': ['11110', '10001', '10001', '10001', '10001', '10001', '11110'],
+    'E': ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+    'F': ['11111', '10000', '10000', '11110', '10000', '10000', '10000'],
+    'G': ['01111', '10000', '10000', '10011', '10001', '10001', '01111'],
+    'H': ['10001', '10001', '10001', '11111', '10001', '10001', '10001'],
+    'I': ['11111', '00100', '00100', '00100', '00100', '00100', '11111'],
+    'J': ['00111', '00010', '00010', '00010', '10010', '10010', '01100'],
+    'K': ['10001', '10010', '10100', '11000', '10100', '10010', '10001'],
+    'L': ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
+    'M': ['10001', '11011', '10101', '10101', '10001', '10001', '10001'],
+    'N': ['10001', '11001', '10101', '10011', '10001', '10001', '10001'],
+    'O': ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
+    'P': ['11110', '10001', '10001', '11110', '10000', '10000', '10000'],
+    'Q': ['01110', '10001', '10001', '10001', '10101', '10010', '01101'],
+    'R': ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
+    'S': ['01111', '10000', '10000', '01110', '00001', '00001', '11110'],
+    'T': ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
+    'U': ['10001', '10001', '10001', '10001', '10001', '10001', '01110'],
+    'V': ['10001', '10001', '10001', '10001', '10001', '01010', '00100'],
+    'W': ['10001', '10001', '10001', '10101', '10101', '10101', '01010'],
+    'X': ['10001', '10001', '01010', '00100', '01010', '10001', '10001'],
+    'Y': ['10001', '10001', '01010', '00100', '00100', '00100', '00100'],
+    'Z': ['11111', '00001', '00010', '00100', '01000', '10000', '11111'],
+    '0': ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
+    '1': ['00100', '01100', '00100', '00100', '00100', '00100', '01110'],
+    '2': ['01110', '10001', '00001', '00010', '00100', '01000', '11111'],
+    '3': ['11110', '00001', '00001', '01110', '00001', '00001', '11110'],
+    '4': ['00010', '00110', '01010', '10010', '11111', '00010', '00010'],
+    '5': ['11111', '10000', '10000', '11110', '00001', '00001', '11110'],
+    '6': ['01110', '10000', '10000', '11110', '10001', '10001', '01110'],
+    '7': ['11111', '00001', '00010', '00100', '01000', '01000', '01000'],
+    '8': ['01110', '10001', '10001', '01110', '10001', '10001', '01110'],
+    '9': ['01110', '10001', '10001', '01111', '00001', '00001', '01110'],
+    '.': ['000', '000', '000', '000', '000', '011', '011'],
+    ',': ['000', '000', '000', '000', '011', '011', '010'],
+    ':': ['000', '011', '011', '000', '011', '011', '000'],
+    ';': ['000', '011', '011', '000', '011', '011', '010'],
+    '-': ['00000', '00000', '00000', '11111', '00000', '00000', '00000'],
+    '_': ['00000', '00000', '00000', '00000', '00000', '00000', '11111'],
+    '!': ['010', '010', '010', '010', '010', '000', '010'],
+    '?': ['01110', '10001', '00001', '00010', '00100', '00000', '00100'],
+    "'": ['010', '010', '010', '000', '000', '000', '000'],
+    '"': ['01010', '01010', '01010', '00000', '00000', '00000', '00000'],
+    '>': ['10000', '01000', '00100', '00010', '00100', '01000', '10000'],
+    '<': ['00001', '00010', '00100', '01000', '00100', '00010', '00001'],
+    '=': ['00000', '11111', '00000', '11111', '00000', '00000', '00000'],
+    '/': ['00001', '00010', '00010', '00100', '01000', '01000', '10000'],
+    '×': ['10001', '01010', '00100', '00100', '00100', '01010', '10001'],
+    '©': ['01110', '10001', '10111', '10100', '10111', '10001', '01110'],
+    '▶': ['10000', '11100', '11110', '11111', '11110', '11100', '10000']
+};
+
+function installPixelText(ctx) {
+    if (ctx._pixelTextInstalled) return;
+    const nativeFillText = ctx.fillText.bind(ctx);
+    ctx._pixelTextInstalled = true;
+    ctx.fillText = function (text, x, y, maxWidth) {
+        const value = String(text).toUpperCase();
+        const usesGameFont = /Press Start 2P|Courier|monospace/i.test(this.font);
+        if (usesGameFont && canDrawPixelText(value)) {
+            drawPixelText(this, value, x, y);
+            return;
+        }
+        nativeFillText(text, x, y, maxWidth);
+    };
+}
+
+function canDrawPixelText(text) {
+    return Array.from(text).every(ch => PIXEL_GLYPHS[ch]);
+}
+
+function getPixelTextSize(ctx) {
+    const match = /(\d+(?:\.\d+)?)px/.exec(ctx.font);
+    const fontSize = match ? parseFloat(match[1]) : 8;
+    return Math.max(1, Math.round(fontSize / 7));
+}
+
+function measurePixelText(text, pixelSize) {
+    let width = 0;
+    for (const ch of Array.from(text)) {
+        const glyph = PIXEL_GLYPHS[ch];
+        width += (glyph[0].length + 1) * pixelSize;
+    }
+    return Math.max(0, width - pixelSize);
+}
+
+function drawPixelText(ctx, text, x, y) {
+    const pixelSize = getPixelTextSize(ctx);
+    const textWidth = measurePixelText(text, pixelSize);
+    const textHeight = 7 * pixelSize;
+    let startX = x;
+    if (ctx.textAlign === 'center') startX -= textWidth / 2;
+    else if (ctx.textAlign === 'right' || ctx.textAlign === 'end') startX -= textWidth;
+
+    let startY = y - textHeight;
+    if (ctx.textBaseline === 'top' || ctx.textBaseline === 'hanging') startY = y;
+    else if (ctx.textBaseline === 'middle') startY = y - textHeight / 2;
+    else if (ctx.textBaseline === 'bottom' || ctx.textBaseline === 'ideographic') startY = y - textHeight;
+    else startY = y - Math.round(textHeight * 0.85);
+
+    let cursorX = Math.round(startX);
+    startY = Math.round(startY);
+    for (const ch of Array.from(text)) {
+        const glyph = PIXEL_GLYPHS[ch];
+        for (let row = 0; row < glyph.length; row++) {
+            for (let col = 0; col < glyph[row].length; col++) {
+                if (glyph[row][col] === '1') {
+                    ctx.fillRect(cursorX + col * pixelSize, startY + row * pixelSize, pixelSize, pixelSize);
+                }
+            }
+        }
+        cursorX += (glyph[0].length + 1) * pixelSize;
+    }
+}
+
 // ---- GAME CLASS ----
 class Game {
     constructor() {
@@ -49,7 +171,10 @@ class Game {
         this.canvas.width = W;
         this.canvas.height = H;
         this.ctx = this.canvas.getContext('2d');
-        this.ctx.imageSmoothingEnabled = false;
+        installPixelText(this.ctx);
+        this.renderScale = 1;
+        this.prepareCanvas();
+        window.addEventListener('resize', () => this.prepareCanvas());
         this.sound = new SoundManager();
         this.levelIndex = 0;
         this.lives = 2;
@@ -67,6 +192,18 @@ class Game {
         this.lastTime = 0;
         this.accumulator = 0;
         requestAnimationFrame(t => this.loop(t));
+    }
+
+    prepareCanvas() {
+        const cssWidth = this.canvas.clientWidth || W;
+        const nextScale = Math.max(1, Math.round(cssWidth / W));
+        if (nextScale !== this.renderScale || this.canvas.width !== W * nextScale || this.canvas.height !== H * nextScale) {
+            this.renderScale = nextScale;
+            this.canvas.width = W * nextScale;
+            this.canvas.height = H * nextScale;
+        }
+        this.ctx.setTransform(this.renderScale, 0, 0, this.renderScale, 0, 0);
+        this.ctx.imageSmoothingEnabled = false;
     }
 
     reset(keepTime = false, resetLives = false) {
@@ -278,6 +415,7 @@ class Game {
     }
 
     renderIntro() {
+        this.prepareCanvas();
         this.ctx.fillStyle = '#000000';
         this.ctx.fillRect(0, 0, W, H);
         this.ctx.font = 'bold 12px "Press Start 2P", monospace';
@@ -1964,6 +2102,7 @@ class Game {
 
     // ---- RENDER ----
     render() {
+        this.prepareCanvas();
         const ctx = this.ctx;
 
         if (this.state === 'title') { ctx.fillStyle = '#5C94FC'; ctx.fillRect(0, 0, W, H); this.renderTitle(ctx); return; }
@@ -2377,7 +2516,7 @@ class Game {
         // Copyright
         ctx.fillStyle = '#FCFCFC';
         ctx.font = '8px "Press Start 2P", monospace';
-        ctx.fillText('\u00a9 NINTENDO', W / 2, 120);
+        ctx.fillText('NINTENDO', W / 2, 120);
 
         // Menu Selection
         const opts = ['NORMAL MODE', 'EXTREME MODE'];

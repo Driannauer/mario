@@ -15,7 +15,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    font-family: 'Press Start 2P', monospace;
+    font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
     overflow: auto;
     position: relative;
     padding: 16px;
@@ -76,9 +76,9 @@ body::before {
 
 #instructions {
     color: #8888bb;
-    font-size: 9px;
+    font-size: 12px;
     text-align: center;
-    line-height: 1.8;
+    line-height: 1.65;
     letter-spacing: 0;
     padding: 12px 20px;
     background: rgba(255, 255, 255, 0.03);
@@ -89,12 +89,12 @@ body::before {
 
 #instructions strong {
     color: #bbbbee;
-    font-size: 10px;
+    font-size: 13px;
 }
 
 .instructions-title {
     margin-bottom: 8px;
-    font-size: 10px;
+    font-size: 13px;
 }
 
 .controls-grid {
@@ -108,7 +108,7 @@ body::before {
     display: flex;
     align-items: center;
     gap: 3px;
-    font-size: 8px;
+    font-size: 11px;
     color: #606090;
     white-space: nowrap;
 }
@@ -121,8 +121,8 @@ body::before {
     border-radius: 3px;
     border: 1px solid #4a4a6a;
     border-bottom: 2px solid #1a1a30;
-    font-size: 7px;
-    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    font-family: Consolas, "Courier New", monospace;
     min-width: 16px;
     text-align: center;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -136,7 +136,7 @@ body::before {
 .start-hint {
     margin-top: 8px;
     color: #555580;
-    font-size: 8px;
+    font-size: 11px;
     animation: blink-hint 2s ease-in-out infinite;
 }
 
@@ -166,7 +166,7 @@ body::before {
     }
 
     #instructions {
-        font-size: 7px;
+        font-size: 11px;
         padding: 6px 12px;
     }
 
