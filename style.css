@@ -1,0 +1,152 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a1a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Press Start 2P', monospace;
+    overflow: hidden;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(220, 24, 32, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 50%, rgba(32, 56, 236, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(252, 160, 68, 0.05) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+#game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 1;
+    position: relative;
+}
+
+#gameCanvas {
+    border: 4px solid #2a2a4a;
+    border-radius: 4px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    box-shadow:
+        0 0 30px rgba(220, 24, 32, 0.15),
+        0 0 60px rgba(32, 56, 236, 0.1),
+        0 4px 20px rgba(0, 0, 0, 0.5),
+        inset 0 0 20px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+}
+
+#gameCanvas:hover {
+    box-shadow:
+        0 0 40px rgba(220, 24, 32, 0.2),
+        0 0 80px rgba(32, 56, 236, 0.15),
+        0 4px 25px rgba(0, 0, 0, 0.6),
+        inset 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+#instructions {
+    color: #8888bb;
+    font-size: 9px;
+    text-align: center;
+    line-height: 1.8;
+    letter-spacing: 0.5px;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 768px;
+}
+
+#instructions strong {
+    color: #bbbbee;
+    font-size: 10px;
+}
+
+.instructions-title {
+    margin-bottom: 8px;
+    font-size: 10px;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px 16px;
+    margin: 6px 0;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 8px;
+    color: #606090;
+    white-space: nowrap;
+}
+
+.key {
+    display: inline-block;
+    background: linear-gradient(180deg, #3a3a5a 0%, #2a2a44 100%);
+    color: #ccccee;
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid #4a4a6a;
+    border-bottom: 2px solid #1a1a30;
+    font-size: 7px;
+    font-family: 'Press Start 2P', monospace;
+    min-width: 16px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.desc {
+    color: #7777aa;
+    margin-left: 4px;
+}
+
+.start-hint {
+    margin-top: 8px;
+    color: #555580;
+    font-size: 8px;
+    animation: blink-hint 2s ease-in-out infinite;
+}
+
+@keyframes blink-hint {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 800px) {
+    #gameCanvas {
+        max-width: 95vw;
+        height: auto;
+    }
+
+    #instructions {
+        font-size: 7px;
+        padding: 6px 12px;
+    }
+}

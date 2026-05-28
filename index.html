@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超级马里奥兄弟 - Super Mario Bros</title>
+    <meta name="description" content="经典超级马里奥兄弟HTML5复刻版，重温童年回忆！">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-wrapper">
+        <canvas id="gameCanvas"></canvas>
+        <div id="instructions">
+            <p class="instructions-title">🎮 <strong>操作说明</strong></p>
+            <div class="controls-grid">
+                <div class="control-item"><span class="key">A</span> <span class="key">D</span> / <span
+                        class="key">←</span> <span class="key">→</span> <span class="desc">左右移动</span></div>
+                <div class="control-item"><span class="key">W</span> / <span class="key">↑</span> / <span
+                        class="key">Space</span> <span class="desc">跳跃</span></div>
+                <div class="control-item"><span class="key">S</span> / <span class="key">↓</span> <span class="desc">蹲下
+                        / 进入水管</span></div>
+                <div class="control-item"><span class="key">Shift</span> <span class="desc">加速奔跑</span></div>
+                <div class="control-item"><span class="key">X</span> / <span class="key">J</span> <span
+                        class="desc">发射火球</span></div>
+                <div class="control-item"><span class="key">R</span> <span class="desc">重新开始本关</span></div>
+                <div class="control-item"><span class="key">P</span> / <span class="key">Esc</span> <span
+                        class="desc">暂停游戏</span></div>
+            </div>
+            <p class="start-hint">🖱️ 点击画面开始游戏</p>
+        </div>
+    </div>
+    <script src="sprites.js"></script>
+    <script src="sound.js"></script>
+    <script src="level.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>
