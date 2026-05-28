@@ -15,7 +15,7 @@ const keyPressed = {};
 window.addEventListener('keydown', e => {
     keys[e.code] = true;
     if (!e.repeat) keyPressed[e.code] = true;
-    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyX', 'KeyJ'].includes(e.code)) e.preventDefault();
+    if (['Enter', 'Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyX', 'KeyJ'].includes(e.code)) e.preventDefault();
 });
 // Helper to clear all inputs
 function clearInputs() {
@@ -63,9 +63,9 @@ class Game {
         this.titleBlink = 0;
         this.canvas.addEventListener('click', () => {
             this.sound.resume();
-            if (this.state === 'title') this.startGame();
+            if (this.state === 'title') this.startFromTitle();
             else if (this.state === 'gameover') { this.lives = 2; this.score = 0; this.coins = 0; this.reset(); this.startGame(); }
-            else if (this.state === 'win') { this.reset(); this.startGame(); }
+            else if (this.state === 'gameComplete') { this.levelIndex = 0; this.lives = 2; this.score = 0; this.coins = 0; this.reset(); this.state = 'title'; }
         });
         this.lastTime = 0;
         this.accumulator = 0;
@@ -160,6 +160,18 @@ class Game {
         this.state = 'levelIntro';
         this.animTimer = 0;
         this.sound.stopBGM();
+    }
+
+    startFromTitle() {
+        this.sound.resume();
+        this.gameMode = this.menuSelection === 0 ? 'normal' : 'extreme';
+        this.levelIndex = 0;
+        this.lives = 2;
+        this.score = 0;
+        this.coins = 0;
+        this.time = 999;
+        this.reset(false, true);
+        this.startGame();
     }
 
     loop(timestamp) {
@@ -2410,14 +2422,7 @@ class Game {
             this.sound.play('bump');
         }
 
-        if (keyPressed['Enter'] || keyPressed['Space']) {
-            this.gameMode = this.menuSelection === 0 ? 'normal' : 'extreme';
-            this.lives = 2; // Ensure fresh start
-            this.score = 0;
-            this.time = 999;
-            this.reset(false, true); // Reset everything
-            this.startGame();
-        }
+        if (keyPressed['Enter'] || keyPressed['Space']) this.startFromTitle();
     }
 
     renderGameOver(ctx) {
